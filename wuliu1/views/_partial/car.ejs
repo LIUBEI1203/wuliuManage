@@ -1,0 +1,306 @@
+    <link href="/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css">
+    <script src="/json2.js" type="text/javascript"></script>
+    <link href="/ligerUI/skins/Gray/css/all.css" rel="stylesheet" type="text/css">
+    <script src="/ligerUI/js/plugins/ligerGrid.js" type="text/javascript"></script>
+    <script src="/javascripts/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/core/base.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerCheckBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerResizable.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerComboBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/ligerui.min.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerForm.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDateEditor.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerButton.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerRadio.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerSpinner.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerTextBox.js" type="text/javascript"></script> 
+    <script src="/ligerUI/js/plugins/ligerTip.js" type="text/javascript"></script>
+    <script src="/javascripts/jquery.form.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $.ligerDialog.close("#addCar");
+        var gridData = [];
+        $(function(){
+            $.post("/wareCar/car",null,listCallback,"json");
+        });
+
+
+        var CarstatusList = [{ statusID: '空闲', statusName: '空闲' }, { statusID: '途中' , statusName: '途中' },{ statusID: '维修', statusName: '维修' } ];
+
+        function listCallback(data){
+                gridData.length=0;
+                    $.each(data.data,function(index,content){
+                        var c={};
+                        c["carId"]=content.carId;
+                        c["carLen"]=content.carLen;
+                        c["purchaseTime"]=content.purchaseTime;
+                        c["carType"]=content.carType;
+                        c["carStatus"]=content.carStatus;
+                        c["carNo"]=content.carNo;
+                        gridData.push(c);
+                    });
+                f_initGrid();
+            }
+
+        var manager, g;
+        function f_initGrid()
+        {
+            // alert("here f_initGrid");
+            g = manager = $("#maingrid").ligerGrid({
+                columns: [
+                    { display: '车辆编号',name: 'carId',width:"70" },
+                    {display:'车辆类型',name:'carType',width:"70",
+                        editor:{type:'text'}
+                    },
+                    {display:'车长',name:'carLen', width:"170",
+                        editor:{type:'digits'}
+                    },
+                    {display:'车辆状态',name:'carStatus',width:"100", isSort: false,
+                        editor: { type: 'select', data: CarstatusList, valueField: 'statusID', textField: 'statusName' }, render: function (item)
+                        {
+                            for (var i = 0; i < CarstatusList.length; i++)
+                            {
+                                if (CarstatusList[i]['statusID'] == item.carStatus)
+                                    return CarstatusList[i]['statusName']
+                            }
+                            return item.statusName;
+                        }
+                    },
+                    {display:'车牌号',name:'carNo',width:"100",
+                        editor:{type:'text'}
+                    },
+                    {display:'购入时间',name:'purchaseTime', width:"170",
+                        editor:{type:'date'}
+                    },
+                    { display: '操作', isSort: false, width: 120, render: function (rowdata, rowindex, value)
+                    {
+                        var h = "";
+                        if (!rowdata._editing)
+                        {
+                            h += "<a href='javascript:beginEdit(" + rowindex + ")'>修改</a> ";
+                            h += "<a href='javascript:deleteRow(" + rowindex + ")'>删除</a> ";
+                        }
+                        else
+                        {
+                            h += "<a href='javascript:endEdit(" + rowindex + ")'>提交</a> ";
+                            h += "<a href='javascript:cancelEdit(" + rowindex + ")'>取消</a> ";
+                        }
+                        return h;
+                    }
+                    }
+                ],
+                onSelectRow: function (rowdata, rowindex)
+                {
+                    $("#txtrowindex").val(rowindex);
+                },
+
+                enabledEdit: true,clickToEdit:false, isScroll: false,
+                data: { Rows: gridData } ,
+                width: '100%'
+            });
+        }
+        
+        function f_add(){
+            $("#carId").val("");
+            $("#purchaseTime").val("");
+            $("#carLen").val("");
+            $("#carType").val("");
+            $("#carStatus").val("");
+            $("#carNo").val("");
+            f_show();
+            $.ligerDialog.open({title:'添加客户(带*号的为必填项)', target: $("#addCar"),width:550});
+        };
+
+
+
+        // 查询
+        function querycar(){
+            var data={};
+            data.carNo =$("#carNo1").val();
+            data.carStatus=$("#carStatus1").val();
+            if(data.carNo=="" && data.carStatus==""){
+                $.post("/wareCar/car",null,listCallback,"json");
+            }
+            else if (data.carId) {
+                $.post("/car/queryByCarNo",data, queryListCallback,"json");
+            }else{
+                $.post("/car/queryByStatus", data, queryListCallback, "json");
+            }
+        }
+
+        // 提交
+        function add(){
+            var addData={};
+            addData.carId = $("#carId").val();
+            addData.carLen = $("#carLen").val();
+            addData.purchaseTime = $("#purchaseTime").val();
+            addData.carType = $("#carType").val();
+            addData.carStatus = $("#carStatus").val();
+            addData.carNo = $("#carNo").val();
+            var jsonString=JSON.stringify(addData);
+            if (!addData.carId || !addData.purchaseTime) {
+                alert("*号的为必填项！");
+            }else{
+                $.post("/addCar", {"jsonString":jsonString}, addCarCallback, "json");
+            }
+        }
+
+        function addCarCallback(data){
+            var temp=data.data;
+            if(temp.code==200){
+                $.ligerDialog.success('操作成功');
+                $.post("/wareCar/car",null,listCallback,"json");
+                $.ligerDialog.hide("#addCar");
+            }
+            else if(temp.code==500)
+            {
+                $.ligerDialog.error(temp.msg);
+
+            }
+        }
+
+        function queryListCallback(data){
+            gridData.length=0;
+            console.log(gridData);
+                $.each(data.data,function(index,content){
+                        var c={};
+                        c["carId"]=content.carId;
+                        c["carLen"]=content.carLen;
+                        c["purchaseTime"]=content.purchaseTime;
+                        c["carType"]=content.carType;
+                        c["carStatus"]=content.carStatus;
+                        c["carNo"]=content.carNo;
+                        gridData.push(c);
+                });
+                f_initGrid();
+        }
+        function beginEdit(rowid) {
+            manager.beginEdit(rowid);
+        }
+        function cancelEdit(rowid) {
+            manager.cancelEdit(rowid);
+        }
+        function endEdit(rowid)
+        {
+            manager.endEdit(rowid);
+            var row = manager.getRow(rowid);
+            var jsonString = JSON.stringify(row);
+            JSON.parse(jsonString);
+            $.post("/updateCar",{"jsonString":jsonString},updateCallback,"json");
+        }
+
+        function updateCallback(data){
+            if(data.code==200){
+                $.ligerDialog.success("修改成功");
+                $.post("/wareCar/car",null,listCallback,"json");
+            }
+            else if(data.code==500)
+            {
+                $.post("/wareCar/car",null,listCallback,"json");
+                $.ligerDialog.error(data.message);
+            }
+        }
+        function deleteRow(rowid)
+        {
+            if (confirm('确定删除?'))
+            {
+                var row = manager.getRow(rowid);
+                var jsonString  = JSON.stringify(row);
+                $.post("/car/delete",{"jsonString":jsonString},deleteCallback,"json");
+                manager.deleteRow(rowid);
+            }
+        }
+
+        function deleteCallback(data){
+            $.ligerDialog.success(data.msg);
+        }
+
+
+        var newrowid = 100;
+        function addNewRow()
+        {
+            manager.addEditRow();
+        }
+        function f_show(){
+            $("#addCar").css('display','block');
+        }
+
+    </script>
+    <style type="text/css">
+        .l-table-edit {}
+        .l-table-edit-td{ padding:4px;}
+        .l-button-submit,.l-button-reset{width:80px; float:left; margin-left:10px; padding-bottom:2px;}
+        .l-dialog-tc{background:#E0EDFF;}
+    </style>
+</div>
+<div  style="padding:10px">
+<div id="addCar" style="display:none" >
+    <form name="form1" method="post" action="" id="form1">
+        <table cellpadding="10" cellspacing="10" class="l-table-edit"   width="100%" >
+            <tr>
+                <td align="right" class="l-table-edit-td">车辆编号:</td>
+                <td align="left" class="l-table-edit-td" ><input name="carId" style="width:200px" type="text" id="carId" ltype="text" /> <font color="red">* </font></td>
+                <td align="left"></td>
+            </tr>
+            <tr>
+                <td align="right" class="l-table-edit-td">购入时间:</td>
+                <td align="left" class="l-table-edit-td"><input name="purchaseTime" style="width:200px" type="date" id="purchaseTime" ltype="text" /> <font color="red">* </font></td>
+                <td align="left"></td>
+            </tr>
+            <tr>
+                <td align="right" class="l-table-edit-td">车辆类型:</td>
+                <td align="left" class="l-table-edit-td"><input name="carType" style="width:200px"  id="carType" type="text" /> </td>
+                <td align="left"></td>
+            </tr>
+            <tr>
+                <td align="right" class="l-table-edit-td">车长:</td>
+                <td align="left" class="l-table-edit-td"><input name="carLen" style="width:200px" type="digits" id="carLen" ltype="digits" /></td>
+                <td align="left"></td>
+            </tr>
+            <tr>
+                <td align="right" class="l-table-edit-td">车辆状态:</td>
+                <td align="left" class="l-table-edit-td"><input name="carStatus" style="width:200px" type="text" id="carStatus" ltype="text" /></td>
+                <td align="left"></td>
+            </tr>
+            <tr>
+                <td align="right" class="l-table-edit-td">车牌号:</td>
+                <td align="left" class="l-table-edit-td"><input name="carNo" style="width:200px" type="text" id="carNo" ltype="text" /></td>
+                <td align="left"></td>
+            </tr>
+        </table>
+        <br />
+        <input type="button" value="提交" id="submitBtn1" onclick="add()" class="l-button l-button-submit" />
+    </form>
+
+</div>
+<div class="l-clear"></div>
+<div class="header">
+    <h1 class='article-title'>物资管理</h1>
+    <h2>部门：<%= user.deptId %></h2>
+    <h3>车辆管理</h3>
+</div>
+
+<div id="list" class="content">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/wareCar/ware">仓库管理</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/wareCar/car">车辆管理</a></li>
+        </ul>
+    </div>
+    <table cellpadding="0" cellspacing="0" class="l-table-edit"  width="100%" >
+        <tr>
+            <td align="right" class="l-table-edit-td">车牌号:</td>
+            <td align="left" class="l-table-edit-td"><input name="carNo" type="text" id="carNo1" ltype="text" /></td>
+            <td align="right" class="l-table-edit-td">车辆状态:</td>
+            <td align="left" class="l-table-edit-td"><input name="carStatus" type="text" id="carStatus1" ltype="text"/></td>
+            <td align="right"><input type="button" value="查询" id="submitBtn" onclick="querycar()" class="l-button l-button-submit" /></td>
+            <td align="right"><input type="button" value="添加" id="addSubmitBtn" onclick="f_add()" class="l-button l-button-submit" /></td>
+        </tr>
+    </table>
+    <div class="l-clear"></div>
+    <div id="maingrid" style="margin-top:0px, margin-left:0px, margin-right:0px "></div> <br />
+</div>
+<div style="display:none;">
+    <!-- g data total ttt -->
+</div>
+</div>

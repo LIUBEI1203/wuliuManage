@@ -1,0 +1,62 @@
+<div class="header">
+    <h1 class='article-title'>添加新的客户</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+<div class="content">
+	<% if (sysmsg && sysmsg.length > 0) { %>
+		<div class='sysmsg'><%- sysmsg %></div>
+	<% } %>
+
+	<form class="pure-form pure-form-stacked" action="addcustom" method="post">
+    <fieldset>
+        <legend>添加新的客户</legend>
+
+        <div class="pure-g">
+            <div class="pure-u-1-5 ">
+                <label for="compId">客户编号：</label>
+                <input id="compId" name="compId" class="pure-u-23-24" type="text"  required>
+            </div>
+
+            <div class="pure-u-1-5">
+                <label for="compName">公司名称：</label>
+                <input id="compName" name="compName" class="pure-u-23-24" type="text" required>
+            </div>
+
+            <div class="pure-u-6-24">
+                <label for="compType" >公司类型：<br/>
+                <input id="compType" name="compType" class="pure-u-23-24" type="text" required>
+                </label>
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="contactor" >联系人：</label>
+                <input id="contactor" name="contactor" class="pure-u-23-24" type="text"  required>
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="address" >公司地址：</label>
+                <input id="address" name="address" class="pure-u-23-24" type="text" required >
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="phoneNo" >联系电话：</label>
+                <input id="phoneNo" name="phoneNo" class="pure-u-23-24" type="text"  required>
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="depositBank" >开户银行：</label>
+                <input id="depositBank" name="depositBank" class="pure-u-23-24" type="text"  >
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="account" >银行账号：</label>
+                <input id="account" name="account" class="pure-u-23-24" type="text"  >
+            </div>
+        
+        </div>
+
+        <button type="submit" class="pure-button pure-button-primary">保存</button>
+    </fieldset>
+</form>
+<a class="pure-link" href="/customs"><button class="pure-button-primary button-my pure-button">返回</button></a>
+</div>

@@ -1,0 +1,159 @@
+    <link href="/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script src="/json2.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/core/base.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerTextBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerCheckBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerComboBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerGrid.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDateEditor.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerSpinner.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerTab.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDrag.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerToolBar.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerFilter.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerResizable.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        
+        //扩展一个 多行文本框 的编辑器
+        $(function(){
+            $.get("/users/appointMeg", {billState:'收件中'}, listCallback,"json");
+        });
+
+        var appointData = [];
+        var BillstatusList = [{ statusID: '预约', statusName: '预约' }, { statusID: '收件中', statusName: '收件中' }, { statusID: '收入', statusName: '收入' },{ statusID: '签收', statusName: '签收' } ];
+
+        function listCallback(data){
+            appointData.length=0;
+            appointData=data.data;
+            f_initGrid();
+            $("#pageloading").hide();
+        }
+         //去掉  大于小于包括,并改变顺序
+        // $.ligerDefaults.Filter.operators['string'] =
+        // $.ligerDefaults.Filter.operators['text'] =
+        // ["like" , "equal", "notequal", "startwith", "endwith" ];
+
+        var manager, g;
+        function f_initGrid()
+        { 
+            var deliver = $("#deliver").val();
+            var deliverData = JSON.parse(deliver);
+           g =  manager = $("#maingrid").ligerGrid({
+                columns: [
+                { display: '订单编号', name: 'billId', width: 200, type: 'text' },
+                { display: '揽件员', name: 'sdeliverId', width: 80, type: 'text' },
+                { display: '收件网点', name: 'netId', width: 80, type: 'text' },
+                { display: '承运商', name: 'cyId', width: 80   },
+                { display: '转运商', name: 'forwarder', width: 80   },
+                { display: '起始时间', name: 'sdate', width: 120 ,type: 'date'  },
+                { display: '订单状态', name: 'billState', width: 50 , 
+                    editor: { type: 'select', data: BillstatusList, valueField: 'statusID', textField: 'statusName' }, render: function (item)
+                        {
+                            for (var i = 0; i < BillstatusList.length; i++)
+                            {
+                                if (BillstatusList[i]['statusID'] == item.billState)
+                                    return BillstatusList[i]['statusName']
+                            }
+                            return item.statusName;
+                        }
+
+                },
+                { display: '客户编号', name: 'compId', width: 80, type: 'float' },
+                { display: '加急费用', name: 'urgentFee', type: 'digits',  width: 50 },
+                { display: '发件地址', name: 'cusAdd', type: 'text',  width: 250 },
+                { display: '收件地址', name: 'recAdd', type: 'text',  width: 250 }
+                ],
+                enabledEdit: true, checkbox:true,rownumbers:true, enabledEdit: true, 
+                isScroll: false,  frozen:false,
+                data:{ Rows: appointData },
+                toolbar: { items: [{ text: '区域任务', click: f_areaDuty },
+                { text: '指派任务', click: f_designDuty, icon: 'add'},
+                { text: '本月收件票数:'+deliverData.收件票数 , click: f_recSum },
+                { text: '本月派件票数:'+deliverData.派件票数 , click: f_disSum},
+                { text: '高级自定义查询', click: itemclick, icon: 'search2'}]
+                },
+                pageSize:30, 
+                width: '100%'
+            });   
+        }
+        function itemclick()
+        {
+            g.options.data = { Rows: appointData };
+            g.showFilter();
+        }
+
+        function f_areaDuty(){
+            var deliver = $("#deliver").val();
+            var deliverData = JSON.parse(deliver);
+            $.get('/users/areaDuty', { responArea: deliverData.responArea }, listCallback, "json" );
+        }
+
+        function f_designDuty(){
+            $.get("/users/appointMeg", {billState:'收件中'}, listCallback,"json");
+        }
+
+        function f_receiveBill(){
+
+            var deliver = $("#deliver").val();
+            var deliverData = JSON.parse(deliver);
+            var billrow=[];
+            billrow=manager.getSelectedRows();
+            var i=billrow.length;
+            var bills="(";
+            while(--i){
+                bills += billrow[i].billId;
+                bills +=',';
+            }
+            bills+=billrow[0].billId;
+            bills+=')';
+
+            var data={
+                bills:bills,
+                deliverId:deliverData.empId
+            }
+            alert(data.deliverId);
+            $.post('/users/sdeliverComplete', data, setCallBack, "json");
+        }
+
+        function setCallBack(data){
+            $.ligerDialog.success(data.meg);
+            if (data.code==200) {
+                $.get("/users/appointMeg", {billState:'收件中'}, listCallback,"json");
+            };
+        }
+
+        function f_disSum(){
+
+        }
+
+        function f_recSum(){
+            
+        }
+
+    </script>
+    
+  <style type="text/css">
+        .l-table-edit {}
+        .l-table-edit-td{ padding:4px;}
+        .l-button-submit,.l-button-reset{width:80px; float:left; margin-left:10px; padding-bottom:2px;}
+        .l-dialog-tc{background:#E0EDFF;}
+    </style>
+
+ <div class="header">
+    <h1 class='article-title'>预约信息</h1>
+    <h2>部门：<%= user.deptId %>   区域：<%= deliver.responArea%></h2>
+</div>
+
+ <div class="l-clear"></div>
+    <br>
+       <br>
+       <div id="maingrid" style="margin-top:20px"></div>
+    <a class="l-button" style="width:80px;float:left; margin-left:6px; margin-top:6px;" onclick='f_receiveBill()' >收入</a>
+  <!--  <a class="l-button" style="width:80px;float:left; margin-left:6px; margin-top:6px;"  onclick="deleteRow()">删除数据</a> -->
+   <br>
+  <div style="display:none;">
+  <!-- g data total ttt -->
+    <input name="deliver" id="deliver" value=<%= JSON.stringify(deliver) %> />
+</div>

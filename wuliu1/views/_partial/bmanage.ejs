@@ -1,0 +1,47 @@
+</div>
+<div class="header">
+    <h1 class='article-title'>经理业务管理</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+
+<div class="content">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/bmanage/订单分派">订单分派</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/bmanage/承运商">承运商</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/bmanage/转运商">转运商</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/bmanage/运输线路">运输线路</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/bmanage/财务报表">财务报表</a></li>
+        </ul>
+    </div>
+
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+    <table class="pure-table pure-table-bordered" style="width: 100%">
+        <thead>
+            <tr>
+                <th>公司编号</th>
+                <th>公司名称</th>
+                <th>联系人</th>
+                <th>电话</th>
+                <th class='motto-header'>公司地址</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (var i = 0; cys && i < cys.length; i++) { %>
+                <tr class='<%- i%2 == 0 ? "pure-table-odd" : "" %>'>
+                    <td><a href='/cy/<%- cys[i].cyId %>' class='nav_a'><%- cys[i].cyId %></a></td>
+                    <td><%- cys[i].name %></td>
+                    <td><%- cys[i].contactName %></td>
+                    <td><%- cys[i].phone%></td>
+                    <td class='motto'><%= cys[i].shipperAdd %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <a class="pure-link" href="/addcy"><button class="pure-button-primary button-my pure-button">添加新的承运商</button></a>
+   
+
+</div>
+    </div>
+</div>

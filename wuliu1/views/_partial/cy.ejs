@@ -1,0 +1,59 @@
+<div class="header">
+    <h1 class='article-title'>合作商信息</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+<div class="content">
+	<% if (sysmsg && sysmsg.length > 0) { %>
+		<div class='sysmsg'><%- sysmsg %></div>
+	<% } %>
+
+	<form class="pure-form pure-form-stacked" action="update" method="post">
+    <fieldset>
+        <legend><%= cy.name %>:合作商信息</legend>
+
+        <div class="pure-g">
+
+                     <% 
+                        var nowtime = new Date().getTime();
+                        var unitConvert = site.unitConvert;
+                    %>
+            <div class="pure-u-1-5 ">
+                <label for="cyId">承运商编号：</label>
+                <input id="cyId" name="cyId" class="pure-u-23-24" type="text" value=<%= cy.cyId ||cy.zyId %> readonly>
+            </div>
+
+            <div class="pure-u-1-5">
+                <label for="name">公司名称：</label>
+                <input id="name" name="name" class="pure-u-23-24" type="text" value=<%= cy.name %> readonly>
+            </div>
+
+            <div class="pure-u-6-24">
+                <label for="contactName" >联系人：<br/>
+      			<input id="contactName" name="contactName" class="pure-u-23-24" type="text" value=<%= cy.contactName %> >
+    			</label>
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="phone" >电话</label>
+                <input id="phone" name="phone" class="pure-u-23-24" type="text" value=<%= cy.phone %> >
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="shipperAdd" >公司地址：</label>
+                <input id="shipperAdd" name="shipperAdd" class="pure-u-23-24" type="text" value=<%= cy.shipperAdd %> >
+            </div>
+            
+
+        </div>
+        
+
+        <button type="submit" class="pure-button button-my pure-button-primary">保存</button>
+
+        
+
+    </fieldset>
+</form>
+
+    <a class="pure-link" href="/cy/delete/<%- cy.cyId ||cy.zyId %>"><button class="pure-button-primary button-my pure-button">删除</button></a>
+    <a class="pure-link" href="/bmanage"><button class="pure-button-primary button-my pure-button">返回</button></a>
+</div>

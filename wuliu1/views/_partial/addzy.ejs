@@ -1,0 +1,47 @@
+<div class="header">
+    <h1 class='article-title'>添加新的转运商</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+<div class="content">
+    <% if (sysmsg && sysmsg.length > 0) { %>
+        <div class='sysmsg'><%- sysmsg %></div>
+    <% } %>
+
+    <form class="pure-form pure-form-stacked" action="addzy" method="post">
+    <fieldset>
+        <legend></legend>
+
+        <div class="pure-g">
+            <div class="pure-u-1-5 ">
+                <label for="zyId">转运商编号：</label>
+                <input id="zyId" name="zyId" class="pure-u-23-24" type="text"  required>
+            </div>
+
+            <div class="pure-u-1-5">
+                <label for="name">公司名称：</label>
+                <input id="name" name="name" class="pure-u-23-24" type="text" required>
+            </div>
+
+            <div class="pure-u-6-24">
+                <label for="contactName" >联系人：<br/>
+                <input id="contactName" name="contactName" class="pure-u-23-24" type="text" required>
+                </label>
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="phone" >电话</label>
+                <input id="phone" name="phone" class="pure-u-23-24" type="text"  required>
+            </div>
+
+            <div class="pure-u-7-24">
+                <label for="shipperAdd" >公司地址：</label>
+                <input id="shipperAdd" name="shipperAdd" class="pure-u-23-24" type="text"  >
+            </div>
+        
+        </div>
+
+        <button type="submit" class="pure-button pure-button-primary">保存</button>
+    </fieldset>
+</form>
+<a class="pure-link" href="/forwarder"><button class="pure-button-primary button-my pure-button">返回</button></a>
+</div>

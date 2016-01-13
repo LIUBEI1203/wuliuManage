@@ -1,0 +1,191 @@
+    <link href="/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/core/base.js" type="text/javascript"></script> 
+    <script src="/ligerUI/js/plugins/ligerGrid.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerCheckBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/core/inject.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerButton.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerForm.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerListBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerComboBox.js" type="text/javascript"></script>
+    <script src="/javascripts/jquery.params.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var billsString=$.query.get("bills");
+        var billsData=[];
+        var cardata=new Array();
+        var driverdata=new Array();
+        $(function ()
+        {
+            $.get('/queryBillsByString', {bills: billsString}, queryBillsByStringCallBack, "json");
+            $.get('/queryFreeCar', null, queryFreeCarCallBack, "json");
+            $.get('/queryFreeDriver', null, queryFreeDriverCallBack, "json");
+
+
+             $("#form2").ligerForm({
+              inputWidth: 330, labelWidth: 120, 
+              fields: [ 
+                { display: "车辆编号 ", name: "carId", textField: "carId",
+                    newline: false, type: "combobox", editor: {
+                      selectBoxWidth: 520,
+                      selectBoxHeight: 300,
+                      textField: 'carId',
+                      valeuField: 'carId',
+                      grid: {
+                        columns: [
+                        { display: '车辆编号', name: "carId", align: 'left', width: 140, minWidth: 33},
+                        { display: '车辆类型', name: "carType", minWidth: 120 },
+                        { display: '状态', name:"carStatus", minWidth:100 },
+                        { display: '车长', name:"carLen", minWidth:100 },
+                        { display: '承重', name:"bearload", minWidth:140 },
+                        { display: '车牌号', name:"carNo", minWidth:140 }
+                        ], 
+                        data:{ Rows: cardata}, switchPageSizeApplyComboBox: false,
+                      pageSize: 10, 
+                      checkbox: false
+                      }
+                    }
+               },
+              { display: "司机编号", name: "empId", textField: "empId",valueFieldID: 'test3',
+                    newline: false, type: "combobox", editor: {
+                      selectBoxWidth: 520,
+                      selectBoxHeight: 300,
+                      textField: 'empId',
+                      valeuField: 'empId',
+                      grid: {
+                        columns: [
+                        { display: '编号', name: "empId", align: 'left', width: 140, minWidth: 33},
+                        { display: '姓名', name: "empName", align: 'left', width: 140, minWidth: 33},
+                        { display: '驾驶证类型', name: "licenseType", minWidth: 120 },
+                        { display: '联系电话', name:"empPhone", minWidth:140 }
+                        ], data:{ Rows: driverdata}, switchPageSizeApplyComboBox: false,
+                      pageSize: 10, isMultiSelect: true,isMultiSelect: true,
+                      checkbox: true
+                      }
+                  }
+               }
+              ]
+          }); 
+
+        });
+
+    //     function itemclick()
+    //     {
+    //         g.options.data = { Rows: billsData };
+    //         g.showFilter();
+    //     }
+
+
+        function queryBillsByStringCallBack(data){
+            if (data.code=200) {
+                billsData=data.data;
+                f_initGrid();
+            }else{
+                $.ligerDialog.err(data.meg);
+            }
+
+        }
+
+        function queryFreeDriverCallBack(data){
+            $.each(data.data,function(index,content){
+                var c={};
+                c["id"]=index;
+                c["empId"]=content.empId;
+                c["empName"]=content.empName;
+                c["licenseType"]=content.licenseType;
+                c["empPhone"]=content.empPhone;
+                driverdata.push(c);
+            });
+        }
+
+        function queryFreeCarCallBack(data){
+            $.each(data.data,function(index,content){
+                var c={};
+                c["carId"]=content.carId;
+                c["carType"]=content.carType;
+                c["carStatus"]=content.carStatus;
+                c["carLen"]=content.carLen;
+                c["bearload"]=content.bearload;
+                c["carNo"]=content.carNo;
+                cardata.push(c);
+            });
+        }
+
+
+        var manager;
+        function f_initGrid(){
+            manager=$("#maingrid").ligerGrid({
+                columns: [
+                { display: '订单编号', type: 'text', name: 'billId', totalSummary:
+                    {
+                        type: 'count'
+                    }
+                },
+                { display: '货物类型', name: 'goodsType', align: 'left', width: 80 },
+                { display: '加急费用', name: 'urgentFee', align: 'right',type: 'float',
+                    totalSummary:
+                    {
+                        render: function (suminf, column, cell)
+                        {
+                            return '<div>最大值:' + suminf.max + '</div>';
+                        },
+                        align: 'left'
+                    }
+                },
+                { display: '重量', name: 'weight', align: 'right', type: 'float',
+                    totalSummary:
+                    {
+                        type: 'sum'
+                    }
+                },
+                { display: '体积', name: 'volume', align: 'right', type: 'float',
+                    totalSummary:
+                    {
+                        type: 'sum'
+                    }
+                },
+                { display: '收件地址', name: 'recAdd', type: 'text',  width: 350 }
+                ],   isScroll: false,
+                data: { Rows: billsData},checkbox:true,rownumbers:true
+            });
+        }
+
+        function submit(){
+            var form = liger.get("form2");
+            var data=form.getData();
+            if (!data[carId]) {alert("请选择一辆车");};
+            if (!data[empId]) {alert("请至少选择一名司机")};
+            var billrow = manager.getSelectedRows();
+            if (billrow.length==0) {
+                alert("请至少选择一个订单");
+            };
+
+            var bills=[];
+            var i=billrow.length;
+            
+            while(--i){
+                bills[i] = billrow[i].billId;
+            }
+            bills[0]=billrow[0].billId;
+            
+
+            $.post('/submitFreight', {"billsData": bills, "data":data}, "submitCallBack", "json");
+        }
+
+    </script>
+  
+
+ <div class="header">
+    <h1 class='article-title'>经理业务管理</h1>
+    <h2>部门：<%= user.deptId %></h2>
+    <h3>   线路配车</h3>
+    
+    <div id="form2">      </div>
+</div>
+  
+    <div id="maingrid">    </div>
+<a class="l-button" style="width:80px;float:left; margin-left:6px; margin-top:6px;"  onclick="submit()"  >确定提交</a>
+
+  <div style="display:none;">
+   
+</div>

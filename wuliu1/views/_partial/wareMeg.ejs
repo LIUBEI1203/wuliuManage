@@ -1,0 +1,225 @@
+    <link href="/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css">
+    <script src="/javascripts/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script src="/json2.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/core/base.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerTextBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerCheckBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerComboBox.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerGrid.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDateEditor.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerSpinner.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerTab.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerDrag.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerToolBar.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerFilter.js" type="text/javascript"></script>
+    <script src="/ligerUI/js/plugins/ligerResizable.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        
+
+        $.ligerDialog.close("#inWare");
+        //扩展一个 多行文本框 的编辑器
+        $(function(){
+            var ware = $("#ware").val();
+            var wareData = JSON.parse(ware);
+            $.get("/goodsMeg",{warehId:wareData.warehId},listCallback,"json");
+        });
+
+        var goodsData = [];
+            function listCallback(data){
+                goodsData.length=0;
+                    $.each(data,function(index,content){
+                        var c={};
+                        c["billId"]=content.billId;
+                        c["cyId"]=content.cyId;
+                        c["goods"]=content.goods;
+                        c["volume"]=content.volume;
+                        c["recAdd"]=content.recAdd;
+                        c["入库时间"]=content.入库时间;
+                        c["出库时间"]=content.出库时间;
+                        c["运输方式"]=content.运输方式;
+                        c["billState"]=content.billState;
+                        goodsData.push(c);
+                    });
+                    f_initGrid();
+                    $("#pageloading").hide();
+            }
+         //去掉  大于小于包括,并改变顺序
+        // $.ligerDefaults.Filter.operators['string'] =
+        // $.ligerDefaults.Filter.operators['text'] =
+        // ["like" , "equal", "notequal", "startwith", "endwith" ];
+
+
+        var manager, g;
+        function f_initGrid()
+        { 
+           g =  manager = $("#maingrid").ligerGrid({
+                columns: [
+                { display: '订单编号', name: 'billId', width: 200, type: 'text' },
+                { display: '货物名称', name: 'goods', width: 100   },
+                { display: '货物状态', name: 'billState', width: 80 },
+                { display: '体积', name: 'volume', width: 80, type: 'float' },
+                { display: '入库时间', name: '入库时间', type: 'date', format: 'yyyy-MM-dd', width: 120, editor: { type: 'date'} },
+                { display: '出库时间', name: '出库时间', type: 'date', format: 'yyyy-MM-dd', width: 120, editor: { type: 'date'} },
+                { display: '收货地址', name: 'recAdd', align: 'left', width: 350 }
+                ],
+                onSelectRow: function (rowdata, rowindex)
+                {
+                    $("#txtrowindex").val(rowindex);
+                },
+                enabledEdit: true, checkbox:true,rownumbers:true, enabledEdit: true, 
+                isScroll: false,  frozen:false,
+                data:{ Rows: goodsData },
+                toolbar: { items: [{ text: '在库货物', click: f_inWare },
+                { text: '添加货物', click: f_add, icon: 'add'},
+                { text: '货物进出历史', click: f_history, icon: 'history'},
+                { text: '高级自定义查询', click: itemclick, icon: 'search2'}]
+                },
+                onAfterEdit: f_onAfterEdit,
+                pageSize:30, 
+                width: '100%'
+            });   
+        }
+        function itemclick()
+        {
+            g.options.data = { Rows: goodsData };
+            g.showFilter();
+        }
+
+        //编辑后事件 
+        function f_onAfterEdit(e)
+        {
+            if (e.column.name == "入库时间")
+            {
+                alert(e);
+                $.post('/updateInWareTime', e, updateTimeCallBack, "json");
+            }else if (e.column.name == "出库时间") {
+                alert(e.value);
+                $.post('/updateOutWareTime', e, updateTimeCallBack, "json");
+            };
+        }
+        function updateTimeCallBack(data){
+            alert(data.meg);
+        }
+
+        function outWareConfirm(delUrl) {
+          if (confirm("确定所选择的货物全部出库？")) {
+            outWare();
+          }
+        }
+
+        function outWare(){
+            var row=[];
+            row = manager.getSelectedRows();
+            var i=row.length;
+            var bills="(";
+            while(--i){
+                bills += row[i].billId;
+                bills +=',';
+            }
+            bills+=row[0].billId;
+            bills+=')';
+
+            var ware = $("#ware").val();
+            var wareData = JSON.parse(ware);
+            var data={
+                bills: bills,
+                warehId: wareData.warehId
+            }
+            $.post('/outWare', data, outWareCallBack, "json");
+        }
+
+        function outWareCallBack (data){
+            var ware = $("#ware").val();
+            var wareData = JSON.parse(ware);
+            $.get("/goodsMeg",{warehId:wareData.warehId},listCallback,"json");
+        }
+
+        function f_inWare(){
+            var ware = $("#ware").val();
+            var wareData = JSON.parse(ware);
+            $.get("/goodsMeg",{warehId:wareData.warehId},listCallback,"json");
+        }
+
+        function f_add(){
+            $("#joinTime").val("");
+            f_show();
+            $.ligerDialog.open({title:'添加货物(请输入订单编号并用，号隔开)', target: $("#inWare"),width:550});
+        }
+
+        function f_history(){
+            var ware = $("#ware").val();
+            var wareData = JSON.parse(ware);
+            $.get('/wareHistory', {warehId:wareData.warehId}, listCallback,"json");
+        }
+
+        function f_show(){
+            $("#inWare").css('display','block');
+        }
+
+        function add(){
+            var billsId=[];
+            var str=$("#billsId").val();
+            if (str) {
+                var strs= new Array(); //定义一数组 
+                strs=str.split(","); //字符分割 
+                $.post('/inWare')
+            }else
+                alert("至少输入一个订单号！");
+        }
+
+         function addNewRow()
+        {
+            manager.addRow({
+                ID : 34,
+                DepartmentID: 3,
+                DepartmentName: '销售部',
+                RealName:"分为",
+                Sex : 1,
+                Age : 25,
+                IncomeDay: new Date(1306108800000),
+                Phone : "2343434",
+                Address : "wwrere4"
+            });
+        } 
+    </script>
+    
+  <style type="text/css">
+        .l-table-edit {}
+        .l-table-edit-td{ padding:4px;}
+        .l-button-submit,.l-button-reset{width:80px; float:left; margin-left:10px; padding-bottom:2px;}
+        .l-dialog-tc{background:#E0EDFF;}
+    </style>
+
+ <div class="header">
+    <h1 class='article-title'>仓库信息</h1>
+    <h2>部门：<%= user.deptId %>   仓库：<%= ware.warehId%></h2>
+</div>
+
+<div id="inWare" style="display:none" >
+    <form name="form1" method="post" action="" id="form1">
+        <table cellpadding="0" cellspacing="0" class="l-table-edit" >
+            <tr>
+                <td align="right" class="l-table-edit-td">订单编号:</td>
+                <td align="left" class="l-table-edit-td">
+                    <textarea cols="50" rows="25" class="l-textarea"  style="width:400px"   input name="billsId" id="billsId" /></textarea></td>
+                <td align="left"></td>
+            </tr>
+        </table>
+        <br />
+        <input type="button" value="提交" id="submitBtn1" onclick="add()" class="l-button l-button-submit" />
+    </form>
+
+</div>
+
+ <div class="l-clear"></div>
+    <br>
+       <br>
+       <div id="maingrid" style="margin-top:20px"></div>
+    <a class="l-button" style="width:80px;float:left; margin-left:6px; margin-top:6px;"  onclick="outWareConfirm()">出库</a>
+  <!--  <a class="l-button" style="width:80px;float:left; margin-left:6px; margin-top:6px;"  onclick="deleteRow()">删除数据</a> -->
+   <br>
+  <div style="display:none;">
+  <!-- g data total ttt -->
+    <input name="ware" id="ware" value=<%= JSON.stringify(ware) %> />
+</div>

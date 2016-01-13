@@ -1,0 +1,50 @@
+<div class="header">
+    <h1 class='article-title'>个人信息</h1>
+</div>
+<div class="content">
+
+    <form class="pure-form pure-form-stacked" action="/userInfo/update" method="post">
+    <fieldset>
+        <legend><%= user.lgn %>:个人信息</legend>
+
+        <div class="pure-g">
+
+                     <% 
+                        var nowtime = new Date().getTime();
+                        var unitConvert = site.unitConvert;
+                    %>
+            <div class="pure-u-1-5 ">
+                <label for="userEmail">用户邮箱：</label>
+                <input id="userEmail" name="userEmail" class="pure-u-23-24" type="text" value=<%= userInfo.userEmail %> readonly>
+            </div>
+
+            <div class="pure-u-1-5">
+                <label for="userGender">姓别：</label>
+                <input id="userGender" name="userGender" class="pure-u-23-24" type="text" value=<%= userInfo.userGender %> >
+            </div>
+
+            <div class="pure-u-1-5">
+                <label for="userName">姓名：</label>
+                <input id="userName" name="userName" class="pure-u-23-24" type="text" value=<%= userInfo.userName %> >
+            </div>
+
+            <div class="pure-u-1-5">
+                <label for="userPhone">电话：</label>
+                <input id="userPhone" name="userPhone" class="pure-u-23-24" type="text" value=<%= userInfo.userPhone %> >
+            </div>
+
+            <div class="pure-u-6-24">
+                <label for="pwd" class="pure-radio">登录密码：<br/>
+                <input id="pwd" name="pwd" class="pure-u-23-24" type="password" value=<%= userInfo.pwd %>>
+                </label>
+            </div
+
+
+        </div>
+
+        <button type="submit" class="pure-button button-my pure-button-primary">保存</button>
+
+    </fieldset>
+</form>
+    <a class="pure-link" href="/expSearch"><button class="pure-button-primary button-my pure-button">返回</button></a>
+</div>

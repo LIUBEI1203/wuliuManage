@@ -1,0 +1,134 @@
+
+<div class="header">
+    <h1 class='article-title'>员工管理</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+<style>
+table .motto span {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 324px;
+}
+@media screen and (max-width: 64em) {
+    .motto, .motto-header {
+        display: none;
+    }
+}
+</style>
+
+
+<script language="JavaScript" type="text/JavaScript"> 
+    /* 是否全选标记 */
+    var checkedAll = false;
+        /* 全选/取消全选 
+         * formName 所在form的name值 
+         * checkboxName checkbox的name值 
+         * 注意：所有checkbox的name值都必须一样，这样才能达到全选的效果 
+         */
+        function selectAll(formName, checkboxName) {
+            var form = document.all.item(formName);
+            var elements = form.elements[checkboxName];
+            for (var i = 0; i < elements.length; i++) {
+                var e = elements[i];
+                if (checkedAll) {
+                    e.checked = false;
+                    form.alls.checked = false;
+                } else {
+                    e.checked = true;
+                    form.alls.checked = true;
+                }
+            }
+            if (checkedAll) {
+                checkedAll = false;
+            } else {
+                checkedAll = true;
+            }
+        }
+        /* 检查是否有checkbox被选中 
+         * formName 所在form的name值 
+         * checkboxName checkbox的name值 
+         * 注意：所有checkbox的name值都必须一样，这样才能达到全选的效果 
+         */
+        function checkAll(formName, checkboxName) {
+            var hasCheck = false;
+            var form = document.all.item(formName);
+            var elements = form.elements[checkboxName];
+            for (var i = 0; i < elements.length; i++) {
+                var e = elements[i];
+
+                if (e.checked) {
+                    hasCheck = true;
+                }
+            }
+            return hasCheck;
+        }
+        /* 执行操作 */
+        function ConfirmDel() {
+            if (!checkAll("emps", "id")) {
+                alert("没有选中员工，至少选择一个！");
+                return;
+            } else {
+                if (confirm("确定删除该员工？")) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }
+        } 
+
+</script>
+
+
+<div class="content">
+    <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/empManage/全部">全部</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/empManage/会计">会计</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/empManage/司机">司机</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/empManage/快递员">快递员</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="/empManage/客服">客服</a></li>
+        </ul>
+    </div>
+
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <form name="emps" action="deleteEmps" method="post">
+            <table class="pure-table pure-table-bordered" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>
+                        <input type="checkbox" name="alls" onClick="selectAll('emps','id')" title="">全选
+                        </th>
+                        <th>工号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>电话</th>
+                        <th class='motto-header'>业绩</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (var i = 0; emps && i < emps.length; i++) { %>
+                        <tr class='<%- i%2 == 0 ? "pure-table-odd" : "" %>'>
+                            <td><input type="checkbox" name="id" value=<%- emps[i].empId %>>
+                            </td>
+                            <td><a href='/emp/<%- emps[i].empId %>' class='nav_a'><%- emps[i].empId %></a></td>
+                            <td><%- emps[i].empName %></td>
+                            <td><%- emps[i].gender %></td>
+                            <td><%- emps[i].empPhone %></td>
+                            <td class='motto'><%= emps[i].achieve %></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <button type="submit" name="submit" id="submit" class="pure-button button-my pure-button-primary"  onclick="javascript:return ConfirmDel();">删除所选员工</button>
+           
+            </form>
+   
+            <a class="pure-link" href="/addEmp"><button class="pure-button-primary button-my pure-button">添加员工</button></a>
+
+        </div>
+    </div>
+</div>

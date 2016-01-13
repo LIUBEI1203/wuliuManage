@@ -1,0 +1,73 @@
+<%- include('_partial/head') %>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main">
+                  <% if (layout == 'index') { %>
+                    <%- include('_partial/index') %>
+                  <% } else if (layout == 'expSearch') { %>
+                    <%- include('_partial/expSearch') %>
+                  <% } else if (layout == 'register') { %>
+                    <%- include('_partial/register') %>
+                  <% } else if (layout == 'empManage') { %>
+                    <%- include('_partial/empManage') %>
+                  <% } else if (layout == 'addEmp') { %>
+                    <%- include('_partial/addEmp') %>
+                  <% } else if (layout == 'emp') { %>
+                    <%- include('_partial/emp') %>
+                  <% } else if (layout == 'bmanage') { %>
+                    <%- include('_partial/bmanage') %>
+                  <% } else if (layout == 'cy') { %>
+                    <%- include('_partial/cy') %>
+                  <% } else if (layout == 'addcy') { %>
+                    <%- include('_partial/addcy') %>
+                  <% }else if (layout == 'zy') { %>
+                    <%- include('_partial/zy') %>
+                  <% } else if (layout == 'addzy') { %>
+                    <%- include('_partial/addzy') %>
+                  <% } else if (layout == 'billDispatch') { %>
+                    <%- include('_partial/billDispatch') %>
+                  <% } else if (layout == 'distribute') { %>
+                    <%- include('_partial/distribute') %>
+                  <% } else if (layout == 'finacial') { %>
+                    <%- include('_partial/finacial') %>
+                  <% } else if (layout == 'path') { %>
+                    <%- include('_partial/path') %>
+                  <% } else if (layout == 'forwarder') { %>
+                    <%- include('_partial/forwarder') %>
+                  <% } else if (layout == 'custom') { %>
+                    <%- include('_partial/custom') %>
+                  <% } else if (layout == 'ware') { %>
+                    <%- include('_partial/ware') %>
+                  <% } else if (layout == 'car') { %>
+                    <%- include('_partial/car') %>
+                  <% } else if (layout == 'addware') { %>
+                    <%- include('_partial/addware') %>
+                  <% } else if (layout == 'addcustom') { %>
+                    <%- include('_partial/addcustom') %>
+                  <% } else if (layout == 'customs') { %>
+                    <%- include('_partial/customs') %>
+                  <% } else if (layout == 'billrecord') { %>
+                    <%- include('_partial/billrecord') %>
+                  <% } else if (layout == 'customlist') { %>
+                    <%- include('_partial/customlist') %>
+                  <% } else if (layout == 'netManage') { %>
+                    <%- include('_partial/netManage') %>
+                  <% } else if (layout == 'appoint') { %>
+                    <%- include('_partial/appoint') %>
+                  <% } else if (layout == 'wareMeg') { %>
+                    <%- include('_partial/wareMeg') %>
+                  <% } else if (layout == 'checkDuty') { %>
+                    <%- include('_partial/checkDuty') %>
+                  <% } else if (layout == 'userInfo') { %>
+                    <%- include('_partial/userInfo') %>
+                  <% } %>
+          </section>
+      </div>
+      <%- include('_partial/mobile-nav') %>
+    </div>
+    <%- include('_partial/footer') %>
+    <%- include('_partial/after-footer') %>
+  </div>
+</body>
+</html>

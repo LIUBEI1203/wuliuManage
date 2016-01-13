@@ -1,0 +1,151 @@
+</div>
+	<link href="lib/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css" />
+    <script src="lib/json2.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerTextBox.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerCheckBox.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerComboBox.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerGrid.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerDateEditor.js" type="text/javascript"></script>
+    <script src="lib/ligerUI/js/plugins/ligerSpinner.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    $(function ()
+      { 
+        $("#submitBtn").click(function(){
+        	var data={};
+        	data.cyName=$("#cyName").val();
+        	data.billId=$("#billId").val();
+        	if (!data.cyName || !data.billId) {
+        		$.ligerDialog.error("请输入快递单号和快递公司！");
+        	}else{
+        		$.post("/expSearch", data, queryCallback, "json");
+        	}
+        });
+
+        function queryCallback(data){
+        	var temp=data.data;
+        	alert(JSON.stringify(temp));
+
+        	if (temp.code==500) {
+        		$.ligerDialog.error("查询错误");
+        	}
+        	else if (temp.code==200) {
+        		f_show();
+        		setTable(temp);
+      		};
+        }
+        // 设置table是否显示
+        function f_show(){
+	        $("#showexp").css('display','block');
+        }	
+
+        // 转换时间格式
+         function makeDate(date) {
+		    try {
+		        var date = new Date(date).toISOString().
+		            replace(/T/, ' ').
+		            replace(/\..+/, '');
+		    }catch(e){
+		        console.log(e);
+		        var date = "0000-00-00 00:00:00";
+		    }finally{
+		        return date;
+		    }
+		};
+		// 删除table中的所有行
+		function deleteAllRowInTable(){
+			var tb = document.getElementById('table1');
+		    var rowNum=tb.rows.length;
+		    for (i=0;i<rowNum;i++) 
+		    {
+		        tb.deleteRow(i);
+		        rowNum=rowNum-1;
+		        i=i-1;
+		    }
+		}
+
+		// 设置table中的值
+        function setTable(data){ 
+        	var date=makeDate(data.sdate);
+        	alert(date);
+			var _table=document.getElementById ("table1"); 
+			_table.border="1px";
+			deleteAllRowInTable();
+
+			var row=document.createElement ("tr"); 
+			var cell=document.createElement ("td"); 
+			cell.width="240px";
+		　　cell.appendChild(document.createTextNode (date)); 
+		　　row.appendChild (cell);
+				
+			var cell=document.createElement ("td"); 
+		　　cell.width = "500px";
+			var val1;
+			if (data.sdeliverName) {val1="快递员"+data.sdeliverName}else{val1=data.netAdd}
+		　　cell.appendChild(document.createTextNode (val1+" 已收入")); 
+		　　row.appendChild (cell);
+			document.getElementById("newbody").appendChild (row); 
+
+			var tMes=[];
+			tMes=data.transMes;
+			alert(tMes);
+			for(var i=0; i < tMes.length; i++){ 
+				alert(i+'='+tMes[i]); 
+				var date=makeDate(tMes[i].入库时间);
+			　　var row=document.createElement ("tr"); 
+			　　var cell=document.createElement ("td"); 
+			　　cell.appendChild(document.createTextNode (date)); 
+			　　row.appendChild (cell);
+					
+				var cell=document.createElement ("td"); 
+			　　cell.appendChild(document.createTextNode (tMes[i].wareAdd+" 已收入")); 
+			　　row.appendChild (cell);
+
+			　　document.getElementById("newbody").appendChild (row); 
+			} 
+		} 	
+    });
+
+    </script>
+
+
+
+<div class="content">
+<form class="pure-form pure-form-aligned" action="" method="post" style="float: center;">
+	<fieldset>
+		<legend>快递查询</legend>
+
+		<div class="pure-control-group">
+			        	<label for="cyName">快递公司：</label>
+				        <select class="pure-input-1-2" id="cyName" name="cyName">
+				            <option>国通</option>
+				            <option>圆通</option>
+				            <option>申通</option>
+				            <option>EMS</option>
+				        </select>
+					</div>
+
+		<div class="pure-control-group">
+        	<label for="billId"></label>
+			<input class="pure-input-1-2" type="search" name="billId" id="billId" placeholder="请输入快递单号"/>
+		</div>
+
+		<div class="pure-controls">
+			<input type="button" value="查询" id="submitBtn" class="pure-button-primary button-my pure-button" />        </div>
+	</fieldset>
+</form>
+
+
+<div id="showexp" style="display:none">
+	<table class="pure-table" id="table1">
+    <tbody id="newbody">
+        <tr>
+            <td>1</td>
+            <td>Honda</td>
+            
+        </tr>
+    </tbody>
+</table>
+</div>
+
+</div>

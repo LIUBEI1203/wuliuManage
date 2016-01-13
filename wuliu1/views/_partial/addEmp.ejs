@@ -1,0 +1,160 @@
+   <title>自动表单</title>     
+  <meta name="keywords" content="免费控件,免费UI控件,免费开源UI,免费开源UI控件,免费开源UI框架,自动表单,自动表单生成">
+  <link href="/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css"> 
+  <link href="/ligerUI/skins/Gray/css/all.css" rel="stylesheet" type="text/css"> 
+  <script src="/javascripts/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script src="/javascripts/json2.js" type="text/javascript"></script>
+    <script src="/javascript/jquery.json.js" type="text/javascript"></script>
+   <script src="/ligerUI/js/core/base.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerForm.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerDateEditor.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerComboBox.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerCheckBox.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerButton.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerRadio.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerSpinner.js" type="text/javascript"></script>
+  <script src="/ligerUI/js/plugins/ligerTextBox.js" type="text/javascript"></script>  
+  <script src="/ligerUI/js/plugins/ligerGrid.js" type="text/javascript"></script>  
+    <script type="text/javascript"> 
+      var groupicon = "/ligerUI/skins/icons/communication.gif";
+      $(function ()
+      { 
+          //创建表单结构 
+          $("#form2").ligerForm({
+              inputWidth: 170, labelWidth: 110, 
+              fields: [ 
+                    { display: "员工编号 ", name: "empId", newline: true, type: "text" , group: "基础信息", groupicon: groupicon, validate:{required:true }},
+                    { display: "姓名 ", name: "empName", newline: true, type: "text", width: 170},
+                    { display: "电话 ", name: "empPhone", newline: true, type: "text" },
+                    { display: "性别 ", name: "gender",  placeholder: "男",
+                        newline: false, type: "combobox", editor: {
+                            data: [
+                                { type: '男', id: '男' },
+                                { type: '女', id: '女' }
+                            ],
+                            value: '男',
+                            textField: 'type',
+                            selectBoxWidth: 100
+                        }
+                    },
+                    { display: "出生日期", name: "empBirth", newline: true, type: "date" ,width:100, validate:{required:true } },
+                    { display: "入职日期", name: "entryDate", newline: true, type: "date" ,width:100 },
+                    { display: "职位 ", name: "job", 
+                            newline: false, type: "combobox", editor: {
+                                data: [
+                                    { type: '快递员', id: '快递员' },
+                                    { type: '司机', id: '司机' },
+                                    { type: '会计', id: '会计' },
+                                    { type: '客服', id: '客服' }
+                                ],
+                                value: '快递员',
+                                textField: 'type',
+                                selectBoxWidth: 100
+                            }
+                    },
+                    { display: "银行" ,name: "depositbank2", newline: true, type: "text" },
+                    { display: "银行帐号" ,name: "account", newline: true, type: "text" },
+
+                    { display: "学历", name: "eduDegree", newline: false, type: "combobox", editor:{
+                        data: [
+                            { type: '大专', id: '大专'},
+                            { type: '本科', id: '本科'},
+                            { type: '硕士', id: '硕士'}
+                        ],
+                        value: '大专',
+                        textField :'type',
+                        selectBoxWidth:80
+                        } 
+                    },
+                    { display: "邮箱", name: "email", newline: true, type: "text" },
+                    { display: "QQ", name: "empqq", newline: true, type: "text" },
+                    { display: "毕业院校" ,name: "school", newline: true, type: "text" },
+                    { display: "家庭住址" ,name: "home", newline: true, type: "text", width: 300 },
+                    { display: "政治面貌", name: "political", newline: false, type: "combobox", editor:{
+                        data: [
+                            { type: '群众', id: '群众'},
+                            { type: '党员', id: '党员'}
+                        ],
+                        value: '群众',
+                        textField :'type',
+                        selectBoxWidth:80
+                        } 
+                    },
+                    { display: "民族", name: "ethnic", newline: false, type: "text" },
+                    { display: "身份证号", name: "creditid", newline: false, type: "text" },
+                    { display: "婚姻", name: "marital", newline: false, type: "combobox", editor:{
+                        data: [
+                            { type: '未婚', id: '未婚'},
+                            { type: '已婚', id: '已婚'}
+                        ],
+                        value: '未婚',
+                        textField :'type',
+                        selectBoxWidth:80
+                        } 
+                    },
+                    { display: "登录密码", name: "empPassword", newline: true, type: "password", validate:{required:true } }
+              ]
+          }); 
+             
+            $("#form3").ligerForm({
+                inputWidth: 170, labelWidth: 110, fields: [
+                    { display: "负责区域 ", name: "responArea", newline: true, type: "text" , group: "职工信息", groupicon: groupicon, validate:{required:true }},
+                    { display: "派件票数 ", name: "派件票数", newline: true, type: "digits", width: 170},
+                    { display: "所属网点 ", name: "所属网点", newline: true, type: "text" },
+                    { display: "收件票数 ", name: "收件票数", newline: true, type: "digits" }
+                ]
+            });
+
+    
+            $("#submitBtn").click(function(){
+                // var data={};
+                // data.empId=$("input[name='empId']").val();
+                // data.empName=$("input[name='empName']").val();
+             
+                var form = liger.get("form2");
+                var data = form.getData();
+                if ((!data.empId)||(!data.empBirth)||(!data.empPassword)) {
+                    alert("*为必填项！");
+                };
+                if (data.empId && data.empBirth && data.empPassword) {
+                    $.post("/addEmp", data, addCallBack, "json");
+                };
+            })
+            
+            function addCallBack(data){
+                var temp= data.data;
+                if(temp.code==200){
+                    $.ligerDialog.success("操作成功！");
+                    // $.("#form2").form('clear');
+                    $('#form2').form('clear');
+                    $.get("/addEmp");
+                }
+                else if(temp.code==500)
+                {
+                    $.ligerDialog.error(temp.mes);
+                }
+            }
+
+
+
+      });  
+        
+
+
+ </script> 
+
+</div>
+
+<div class="header">
+    <h1 class='article-title'>添加新员工</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+<div style="padding:50px">
+
+    <div id="form2" ></div> 
+
+    <input type="button" value="提交" id="submitBtn" class="pure-button-primary button-my pure-button" />
+    <a class="pure-link" href="/empManage"><button class="pure-button-primary button-my pure-button">返回</button></a>
+</div>
+

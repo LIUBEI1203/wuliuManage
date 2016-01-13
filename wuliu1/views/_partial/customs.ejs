@@ -1,0 +1,120 @@
+</div>
+<div class="header">
+    <h1 class='article-title'>客户管理</h1>
+    <h2>部门：<%= user.deptId %></h2>
+</div>
+<style>
+table .motto span {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 324px;
+}
+@media screen and (max-width: 64em) {
+    .motto, .motto-header {
+        display: none;
+    }
+}
+</style>
+<div class="content">
+
+
+<script language="JavaScript" type="text/JavaScript"> 
+/* 是否全选标记 */ 
+var checkedAll = false;
+/* 全选/取消全选 
+* formName 所在form的name值 
+* checkboxName checkbox的name值 
+* 注意：所有checkbox的name值都必须一样，这样才能达到全选的效果 
+*/ 
+function selectAll(formName,checkboxName){ 
+var form = document.all.item(formName); 
+var elements = form.elements[checkboxName]; 
+for (var i=0;i<elements.length;i++){  
+var e = elements[i]; 
+if(checkedAll){ 
+e.checked = false; 
+form.alls.checked = false; 
+} else { 
+e.checked = true; 
+form.alls.checked = true; 
+} 
+} 
+if(checkedAll){ 
+checkedAll = false; 
+} else { 
+checkedAll = true; 
+} 
+}  
+/* 检查是否有checkbox被选中 
+* formName 所在form的name值 
+* checkboxName checkbox的name值 
+* 注意：所有checkbox的name值都必须一样，这样才能达到全选的效果 
+*/ 
+function checkAll(formName,checkboxName){ 
+var hasCheck = false; 
+var form = document.all.item(formName); 
+var elements = form.elements[checkboxName]; 
+for (var i=0;i<elements.length;i++){ 
+var e = elements[i]; 
+
+if(e.checked){ 
+hasCheck = true; 
+} 
+} 
+return hasCheck; 
+}
+/* 执行操作 */ 
+function ConfirmDel(){ 
+if (!checkAll("emps","id")){ 
+alert("没有选中员工，至少选择一个！"); 
+return;
+} else { 
+if(confirm("确定删除该员工？")){
+    return true;
+}else{
+    return false; 
+}
+
+} 
+} 
+</script>
+
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+    <form name="customs" action="deleteComp" method="post">
+    <table class="pure-table pure-table-bordered" style="width: 100%">
+        <thead>
+            <tr>
+                <th>
+                <input type="checkbox" name="alls" onClick="selectAll('customs','id')" title="">全选
+                </th>
+                <th>客户编号</th>
+                <th>公司名称</th>
+                <th>联系人</th>
+                <th>电话</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (var i = 0; customs && i < customs.length; i++) { %>
+                <tr class='<%- i%2 == 0 ? "pure-table-odd" : "" %>'>
+                    <td><input type="checkbox" name="id" value=<%- customs[i].compId %>>
+                    </td>
+                    <td><a href='/customs/<%- customs[i].compId %>' class='nav_a'><%- customs[i].compId %></a></td>
+                    <td><%- customs[i].compName %></td>
+                    <td><%- customs[i].contactor %></td>
+                    <td><%- customs[i].phoneNo %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <button type="submit" name="submit" id="submit" class="pure-button button-my pure-button-primary"  onclick="javascript:return ConfirmDel();">删除所选客户</button>
+
+    </form>
+   
+    <a class="pure-link" href="/addcustom"><button class="pure-button-primary button-my pure-button">添加客户</button></a>
+
+</div>
+    </div>
+</div>

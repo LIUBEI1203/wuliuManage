@@ -1,0 +1,36 @@
+.sysmsg {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: red;
+}
+
+.outer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.outer:before,
+.outer:after {
+  content: "";
+  display: table;
+}
+.outer:after {
+  clear: both;
+}
+
+.pure-button-submit{
+  margin-top: 40px;
+  margin-left: 700px;
+  vertical-align: right;
+}
+
+.button-my {
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  margin-top: 40px;
+  margin-right:40px;
+  vertical-align: center;
+}

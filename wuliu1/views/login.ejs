@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+	
+		<title><%= site.HOST.TITLE %>
+			<% if (typeof subtitle !== 'undefined') { %>
+				<%= subtitle ? ' | ' + subtitle : '' %>
+			<% } %>
+		</title>
+		<!-- <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" /> -->
+		<link rel="stylesheet" href="/stylesheets/pure-release-0.6.0/pure-min.css"/>
+		<link title="default" rel="stylesheet" href="/stylesheets/pure-release-0.6.0/slide-menu.css">
+		<link title="dark" rel="stylesheet" href="/stylesheets/pure-release-0.6.0/slide-menu-dark.css" disabled="disabled"/>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="/stylesheets/font-awesome/css/font-awesome.min.css"/>
+		<script type="text/javascript" src="/javascripts/main.js"></script>
+		<script type="text/javascript" src="/javascripts/problem.js"></script>
+		<script src="/javascripts/jquery-2.1.0.min.js"></script>
+		<script src="/javascripts/jquery.cookie.js"></script> 
+		<script src="/javascripts/jquery.countdown.min.js"></script>
+		<script src="/javascripts/typed.js"></script>
+		<link rel="stylesheet" href="/stylesheets/terminal.css">
+	</head>
+
+	<body>
+		<div class="header">
+			<img id="loginBackgroundImg" src="/images/backg.png" width=1000 height=500>
+		</div>
+
+		<div class="content">
+
+			<% if (sysmsg && sysmsg.length > 0) { %>
+				<div class='sysmsg'><%- sysmsg %></div>
+			<% } %>
+			<form class="pure-form pure-form-aligned" action="login" method="post" style="float: center;">
+			    <fieldset>
+			        <legend>登录</legend>
+			        <div class="pure-control-group">
+			        	<label for="lgn">登录名：</label>
+						<input class="pure-input-1-2" type="text" name="lgn" id="lgn" placeholder=" "/>
+					</div>
+
+					<div class="pure-control-group">
+			        	<label for="pwd">密码：</label>
+						<input class="pure-input-1-2" type="password" name="pwd" id="pwd" />
+					</div>
+
+					<div class="pure-control-group">
+			        	<label for="job">登录角色：</label>
+				        <select name="job", id="job" >
+				            <option>管理员</option>
+				            <option>经理</option>
+				            <option>会计</option>
+				            <option>快递员</option>
+				            <option>司机</option>
+				            <option>网点</option>
+				            <option>客户</option>
+				        </select>
+					</div>
+
+					<div class="pure-controls">
+         				<label for="cb" class="pure-checkbox">
+                			<input id="cb" type="checkbox"> 记住密码
+            			</label>
+            			<button type="submit" name="submit" id="submit" class="pure-button pure-button-primary">登录</button>
+       				</div>
+
+
+			    </fieldset>
+			</form>
+		</
+		>
+	
+
+</html>
+
+
+
