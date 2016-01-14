@@ -4,7 +4,7 @@ module.exports = {
 	mysql: {
 		host: 'localhost', 
 		user: 'root',
-		password: '911224',
+		password: 'root',
 		database:'exp', 
 		port: 3306
 	}
